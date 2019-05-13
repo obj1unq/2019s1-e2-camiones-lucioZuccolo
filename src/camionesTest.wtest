@@ -1,0 +1,69 @@
+import camion.*
+import cosas.*
+
+describe "tests camiones y cosas" {
+
+	fixture {
+		camion.cargar(knightRider)
+	}
+	
+	test "peso total del camion"{
+		assert.equals(1500, camion.pesoTotal())
+	}
+	test "esta excedido de peso"{
+		assert.notThat(camion.estaExcedido())
+	}
+	test "objetos peligrosos"{
+		assert.equals( [knightRider] , camion.objetosPeligrosos(5))
+	}
+	test "objetos mas peligrosos que una cosa en particular"{
+		camion.cargar(residuosRadioactivos)
+		assert.equals( [residuosRadioactivos] , camion.objetosMasPeligrososQue(bumblebee))
+	}
+	test "puede circular en ruta"{
+		camion.cargar(residuosRadioactivos)
+		assert.notThat(camion.puedeCircularEnRuta(100))	
+	}
+	test "revisar si tiene Algo Que Pesa Entre"{
+		camion.cargar(bumblebee)
+		assert.equals( [bumblebee] , camion.tieneAlgoQuePesaEntre(700,900))
+	}
+	test "cosa mas pesada"{
+		camion.cargar(bumblebee)
+		assert.equals( bumblebee , camion.cosaMasPesada())
+	}
+	test "calcular el total de los bultos"{
+		camion.cargar(bumblebee)
+		camion.cargar(bateriaAntiaera)
+		bateriaAntiaera.cargarMisiles()
+		assert.equals( 5 , camion.totalBultos())	
+	}
+	test "lista de pesos de cosas del camion"{
+		camion.cargar(bumblebee)
+		camion.cargar(paqueteLadrillos)
+		assert.equals( [ 500 , 800 , 24 ], camion.pesos())
+	}
+	test "ver cambios en cosas cuando son cargadas"{
+		camion.cargar(residuosRadioactivos)
+		camion.cargar(bumblebee)
+		camion.cargar(paqueteLadrillos)
+		camion.cargar(arena)
+		assert.equals( 15 ,residuosRadioactivos.peso())
+		assert.that(bumblebee.esRobot())
+		assert.equals( 12 ,paqueteLadrillos.cantLadrillos())
+		assert.equals( 20 ,arena.peso())
+	}
+	test "contenedor portuario"{
+		camion.descargar(knightRider)
+		contenedorPortuario.meter(knightRider)
+		contenedorPortuario.meter(bumblebee)
+		contenedorPortuario.meter(bateriaAntiaera)
+		bateriaAntiaera.cargarMisiles()
+		contenedorPortuario.meter(paqueteLadrillos)
+		paqueteLadrillos.agregarLadrillos(100)
+		assert.equals( 1900 , contenedorPortuario.peso())
+		assert.equals( 100 , contenedorPortuario.nivelPeligrosidad())
+		assert.equals( 6 , contenedorPortuario.cantidadDeBultos())
+	}
+}
+
